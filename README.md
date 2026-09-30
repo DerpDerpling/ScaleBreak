@@ -1,4 +1,4 @@
-# ScaleBreak
+![ScaleBreak](https://raw.githubusercontent.com/DerpDerpling/ScaleBreak/refs/heads/main/refs/ScaleBreakHero.webp)
 
 ScaleBreak is a client side Fabric mod that makes block breaking feel more immersive by smoothly shrinking blocks while they are being mined.
 
