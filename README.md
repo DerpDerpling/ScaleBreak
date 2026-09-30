@@ -18,7 +18,7 @@ ScaleBreak can be configured in-game using:
 
 Available configuration commands include:
 
-```json
+```
 /scalebreak toggle
 /scalebreak shrinkAmount <value> //how small the block gets before breaking
 /scalebreak shrinkSpeed <value> // how fast the shrinking animation goes to the next state
