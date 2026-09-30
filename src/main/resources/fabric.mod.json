@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "scalebreak",
+	"version": "${version}",
+	"name": "ScaleBreak",
+	"description": "The Mod That Shrinks Blocks As You Break Them",
+	"authors": [
+		"DerpDerpling"
+	],
+	"contact": {
+		"homepage": "https://github.com/DerpDerpling/ScaleBreak",
+		"issues": "https://github.com/DerpDerpling/ScaleBreak/issues"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/scalingbreak/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"derp.scalingbreak.Scalingbreak"
+		],
+		"client": [
+			"derp.scalingbreak.client.ScalingbreakClient"
+		]
+	},
+	"mixins": [
+		"scalingbreak.mixins.json",
+		{
+			"config": "scalingbreak.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

@@ -1,0 +1,30 @@
+{
+  "required": true,
+  "package": "derp.scalingbreak.client.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "AoCalculatorMixin",
+    "BlockEntityRenderDispatcherMixin",
+    "BlockRenderInfoMixin",
+    "ChestRendererMixin",
+    "MultiPlayerGameModeMixin",
+    "SectionCompilerMixin",
+    "WorldRendererMixin",
+    "compat.iris.IrisShadowRendererMixin",
+    "compat.sodium.SodiumBlockRenderContextMixin",
+    "compat.sodium.SodiumChunkBuilderMeshingTaskMixin",
+    "compat.sodium.SodiumSmoothLightPipelineMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  },
+  "mixins": [
+    "compat.bbe.BBEAbstractSignRendererMixin",
+    "compat.bbe.BBEBlockRendererMixin",
+    "compat.bbe.BBEChestRendererMixin",
+    "compat.bbe.InstancedBlockEntityManagerMixin"
+  ]
+}
