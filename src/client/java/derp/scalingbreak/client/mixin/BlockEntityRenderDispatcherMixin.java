@@ -1,17 +1,16 @@
 package derp.scalingbreak.client.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import derp.scalingbreak.client.BlockBreakScaleController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.blockentity.state.ChestRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -19,7 +18,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(BlockEntityRenderDispatcher.class)
 public abstract class BlockEntityRenderDispatcherMixin {
@@ -42,52 +40,43 @@ public abstract class BlockEntityRenderDispatcherMixin {
         return new Vec3((bounds.minX + bounds.maxX) * 0.5D, (bounds.minY + bounds.maxY) * 0.5D, (bounds.minZ + bounds.maxZ) * 0.5D);
     }
 
-    @WrapOperation(method = "submit", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/blockentity/BlockEntityRenderer;" + "submit(" + "Lnet/minecraft/client/renderer/blockentity/state/BlockEntityRenderState;" + "Lcom/mojang/blaze3d/vertex/PoseStack;" + "Lnet/minecraft/client/renderer/SubmitNodeCollector;" + "Lnet/minecraft/client/renderer/state/CameraRenderState;" + ")V"))
-    private <S extends BlockEntityRenderState> void scalingbreak$scaleBlockEntity(BlockEntityRenderer<?, S> renderer, S renderState, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState, Operation<Void> original) {
-        if (renderState instanceof ChestRenderState) {
-            original.call(renderer, renderState, poseStack, submitNodeCollector, cameraRenderState);
-
+    @WrapMethod(method = "submit")
+    private <S extends BlockEntityRenderState> void scalingbreak$scaleBlockEntity(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera, Operation<Void> original) {
+        if (state instanceof ChestRenderState) {
+            original.call(state, poseStack, submitNodeCollector, camera);
             return;
         }
 
-        BlockBreakScaleController.BreakAnimation animation = BlockBreakScaleController.getForPos(renderState.blockPos);
+        BlockBreakScaleController.BreakAnimation animation = BlockBreakScaleController.getForPos(state.blockPos);
 
         if (animation == null) {
-            original.call(renderer, renderState, poseStack, submitNodeCollector, cameraRenderState);
-
+            original.call(state, poseStack, submitNodeCollector, camera);
             return;
         }
 
         float scale = animation.scale();
 
-        // Block entity renderers receive a pose stack whose origin is this block's
-        // world position. Convert the animation's shared world-space pivot into
-        // that local space so every linked block entity (notably both halves of
-        // a bed) scales around the exact same point.
         Vec3 pivot = animation.pivot();
-        double pivotX = pivot.x - renderState.blockPos.getX();
-        double pivotY = pivot.y - renderState.blockPos.getY();
-        double pivotZ = pivot.z - renderState.blockPos.getZ();
+        double pivotX = pivot.x - state.blockPos.getX();
+        double pivotY = pivot.y - state.blockPos.getY();
+        double pivotZ = pivot.z - state.blockPos.getZ();
 
         poseStack.pushPose();
 
         poseStack.translate(pivotX, pivotY, pivotZ);
-
         poseStack.scale(scale, scale, scale);
-
         poseStack.translate(-pivotX, -pivotY, -pivotZ);
 
-        ModelFeatureRenderer.CrumblingOverlay oldBreakProgress = renderState.breakProgress;
+        ModelFeatureRenderer.CrumblingOverlay oldBreakProgress = state.breakProgress;
 
         if (oldBreakProgress != null) {
-            renderState.breakProgress = new ModelFeatureRenderer.CrumblingOverlay(oldBreakProgress.progress(), poseStack.last().copy());
+            state.breakProgress = new ModelFeatureRenderer.CrumblingOverlay(oldBreakProgress.progress(), poseStack.last().copy());
         }
 
         try {
-            original.call(renderer, renderState, poseStack, submitNodeCollector, cameraRenderState);
+            original.call(state, poseStack, submitNodeCollector, camera);
         } finally {
-            renderState.breakProgress = oldBreakProgress;
-
+            state.breakProgress = oldBreakProgress;
             poseStack.popPose();
         }
     }

@@ -1,9 +1,9 @@
 package derp.scalingbreak.client;
 
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.CardinalLighting;
 import net.minecraft.world.level.ColorResolver;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -50,20 +50,13 @@ public class BreakingBlockRenderView implements BlockAndTintGetter {
     }
 
     @Override
-    public int getBlockTint(BlockPos pos, ColorResolver resolver) {
-        return level.getBlockTint(pos, resolver);
+    public CardinalLighting cardinalLighting() {
+        return level.cardinalLighting();
     }
 
     @Override
-    public float getShade(Direction direction, boolean shaded) {
-        float vanilla = level.getShade(direction, shaded);
-
-        float scale = BlockBreakScaleController.scale(hiddenPos);
-        float openness = Math.clamp(1.0F - scale, 0.0F, 1.0F);
-
-        float strength = openness * 0.9F;
-
-        return vanilla + (1.0F - vanilla) * strength;
+    public int getBlockTint(BlockPos pos, ColorResolver resolver) {
+        return level.getBlockTint(pos, resolver);
     }
 
     @Override

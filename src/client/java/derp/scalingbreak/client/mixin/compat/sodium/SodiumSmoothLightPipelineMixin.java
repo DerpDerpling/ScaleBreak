@@ -20,7 +20,7 @@ public abstract class SodiumSmoothLightPipelineMixin {
     private long cachedPos;
 
     @Inject(method = "calculate", at = @At("HEAD"), remap = false)
-    private void scalingbreak$invalidateLightingCache(ModelQuadView quad, BlockPos pos, QuadLightData out, Direction cullFace, Direction lightFace, boolean shade, boolean enhanced, CallbackInfo ci) {
+    private void scalingbreak$invalidateLightingCache(ModelQuadView quad, BlockPos pos, QuadLightData out, Direction cullFace, Direction lightFace, Direction shadeDirectionOverride, boolean enhanced, CallbackInfo ci) {
         if (BlockBreakScaleController.isRenderingShrinkingBlock()) {
             cachedPos = Long.MIN_VALUE;
         }

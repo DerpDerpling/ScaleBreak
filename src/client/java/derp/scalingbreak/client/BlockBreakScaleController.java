@@ -405,6 +405,6 @@ public final class BlockBreakScaleController {
         int sectionY = pos.getY() >> 4;
         int sectionZ = pos.getZ() >> 4;
 
-        minecraft.levelRenderer.setSectionDirtyWithNeighbors(sectionX, sectionY, sectionZ);
+        minecraft.levelExtractor.setSectionDirtyWithNeighbors(sectionX, sectionY, sectionZ);
     }
 }

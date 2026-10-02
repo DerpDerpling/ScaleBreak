@@ -120,7 +120,7 @@ public final class BetterBlockEntitiesCompat {
             return;
         }
 
-        if (!ext.supportedBlockEntity()) {
+        if (!ext.bbe$isSupportedBlockEntity()) {
             return;
         }
 
